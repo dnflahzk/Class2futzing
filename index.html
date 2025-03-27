@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkNYC Map</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- 내 스타일 -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+<body>
+  <h2>NYC LinkNYC Map</h2>
+
+  <div id="map-controls">
+    <div>
+      <h3>Change Map Style</h3>
+      <button onclick="changeMapStyle('osm')">OpenStreetMap</button>
+      <button onclick="changeMapStyle('satellite')">Satellite</button>
+      <button onclick="changeMapStyle('dark')">Dark Mode</button>
+    </div>
+
+    <div>
+      <h3>Adjust Map Size</h3>
+      <input type="range" id="mapSizeSlider" min="300" max="800" value="500" oninput="resizeMap(this.value)">
+      <span id="mapSizeValue">500px</span>
+    </div>
+  </div>
+
+  <h3>Search by ZIPCODE</h3>
+  <input type="text" id="zipcode" placeholder="e.g., 10001">
+  <button onclick="loadMap()">Search</button>
+
+  <div id="map"></div>
+
+  <!-- Legend -->
+  <div id="legend">
+    <strong>Legend</strong>
+    <p><span class="legend-color" style="background-color: green;"></span> Link1.0</p>
+    <p><span class="legend-color" style="background-color: blue;"></span> Link5G</p>
+  </div>
+
+  <h3>What's your LinkNYC type?</h3>
+  <button onclick="showImage('link1')">Link1.0</button>
+  <button onclick="showImage('link5g')">Link5G</button>
+
+  <div id="image-overlay">
+    <button id="close-button" onclick="hideImage()">×</button>
+    <img id="kiosk-image" src="" alt="LinkNYC Kiosk" />
+  </div>
+
+  <!-- 🔗 연결된 JS 파일 -->
+  <script src="script.js"></script>
+</body>
+
+</html>
