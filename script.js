@@ -1,4 +1,4 @@
-// Global variables
+// Global variable declarations
 let map;
 let markerGroup;
 
@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
   layers['osm'].addTo(map);
   markerGroup = L.layerGroup().addTo(map);
 
-  // Load all LinkNYC kiosks when the page loads
+  // ✅ 1. Load all kiosks when the page loads
   loadAllKiosks();
 
-  // Change base map style
+  // ✅ 2. Functions for map style, resizing, and ZIP search
   window.changeMapStyle = function (style) {
     map.eachLayer(layer => {
       if (layer instanceof L.TileLayer) map.removeLayer(layer);
@@ -29,14 +29,13 @@ document.addEventListener("DOMContentLoaded", function () {
     layers[style].addTo(map);
   };
 
-  // Resize map dynamically
   window.resizeMap = function (size) {
     document.getElementById("map").style.height = size + "px";
     document.getElementById("mapSizeValue").innerText = size + "px";
     map.invalidateSize();
   };
 
-  // Load all kiosks without ZIP filter
+  // ✅ 3. Load all kiosks (no ZIP filtering)
   function loadAllKiosks() {
     const apiUrl = `https://data.cityofnewyork.us/resource/s4kf-3yrf.json`;
 
@@ -66,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch(error => console.error("Error fetching ALL data:", error));
   }
 
-  // Load kiosks based on ZIP code search
+  // ✅ 4. ZIP code filter function (still used)
   window.loadMap = function () {
     const zipcode = document.getElementById("zipcode").value.trim();
     if (!zipcode) {
@@ -85,3 +84,44 @@ document.addEventListener("DOMContentLoaded", function () {
           alert("No LinkNYC locations found for this ZIPCODE.");
           return;
         }
+
+        data.forEach(point => {
+          if (point.latitude && point.longitude) {
+            const kioskType = point["planned_kiosk_type"] || "Unknown Type";
+            const address = point["street_address"] || "No address available";
+            const color = kioskType.toLowerCase().includes("5g") ? "blue" : "green";
+
+            const marker = L.circleMarker([+point.latitude, +point.longitude], {
+              color: color,
+              fillColor: color,
+              fillOpacity: 0.8,
+              radius: 6
+            });
+
+            marker.bindTooltip(`<b>Type: ${kioskType}</b><br>${address}`);
+            markerGroup.addLayer(marker);
+          }
+        });
+
+        const firstPoint = data[0];
+        map.setView([+firstPoint.latitude, +firstPoint.longitude], 14);
+      })
+      .catch(error => console.error("Error fetching ZIP data:", error));
+  };
+
+  // ✅ Kiosk image overlay functions
+  window.showImage = function (type) {
+    const img = document.getElementById("kiosk-image");
+    const overlay = document.getElementById("image-overlay");
+
+    img.src = type === "link1"
+      ? "https://www.link.nyc/assets/img/LinkNYC.jpg"
+      : "https://www.amny.com/wp-content/uploads/2023/04/MG_4810-2048x1365.jpg";
+
+    img.onload = () => overlay.style.display = "block";
+  };
+
+  window.hideImage = function () {
+    document.getElementById("image-overlay").style.display = "none";
+  };
+});
