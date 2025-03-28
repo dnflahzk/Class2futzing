@@ -114,4 +114,8 @@ body {
     align-items: center;
     justify-content: center;
   }
+
+  #total-count {
+    display: none;
+  }
   
