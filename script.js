@@ -28,12 +28,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     layers[style].addTo(map);
   };
-
-  window.resizeMap = function (size) {
-    document.getElementById("map").style.height = size + "px";
-    document.getElementById("mapSizeValue").innerText = size + "px";
-    map.invalidateSize();
+  window.resizeMapWidth = function (width) {
+    const mapDiv = document.getElementById("map");
+    mapDiv.style.width = width + "%";
+    document.getElementById("mapWidthValue").innerText = width + "%";
+    map.invalidateSize(); // 
   };
+
 
   // ✅ 3. Load all kiosks (no ZIP filtering)
   function loadAllKiosks() {
@@ -42,7 +43,12 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
+        console.log("Kiosk data received:", data.length);
         markerGroup.clearLayers();
+          
+        // ✅ Display total count
+        document.getElementById("total-count").innerText =
+          `Total kiosks displayed: ${data.length}`;
 
         data.forEach(point => {
           if (point.latitude && point.longitude) {
@@ -70,44 +76,50 @@ document.addEventListener("DOMContentLoaded", function () {
     const zipcode = document.getElementById("zipcode").value.trim();
     if (!zipcode) {
       alert("Please enter a ZIPCODE.");
+      document.getElementById("result-count").innerText = ""; // Clear previous result count
       return;
     }
-
+  
     const apiUrl = `https://data.cityofnewyork.us/resource/s4kf-3yrf.json?$where=Postcode='${zipcode}'`;
-
+  
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
         markerGroup.clearLayers();
-
+  
+        // ✅ Display the number of kiosks found for the ZIP code
+        document.getElementById("result-count").innerText =
+          `Found ${data.length} kiosks in ZIPCODE ${zipcode}`;
+  
         if (data.length === 0) {
           alert("No LinkNYC locations found for this ZIPCODE.");
           return;
         }
-
+  
         data.forEach(point => {
           if (point.latitude && point.longitude) {
             const kioskType = point["planned_kiosk_type"] || "Unknown Type";
             const address = point["street_address"] || "No address available";
             const color = kioskType.toLowerCase().includes("5g") ? "blue" : "green";
-
+  
             const marker = L.circleMarker([+point.latitude, +point.longitude], {
               color: color,
               fillColor: color,
               fillOpacity: 0.8,
               radius: 6
             });
-
+  
             marker.bindTooltip(`<b>Type: ${kioskType}</b><br>${address}`);
             markerGroup.addLayer(marker);
           }
         });
-
+  
         const firstPoint = data[0];
         map.setView([+firstPoint.latitude, +firstPoint.longitude], 14);
       })
       .catch(error => console.error("Error fetching ZIP data:", error));
   };
+  
 
   // ✅ Kiosk image overlay functions
   window.showImage = function (type) {

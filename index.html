@@ -9,7 +9,7 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-  <!-- My style -->
+  <!-- 내 스타일 -->
   <link rel="stylesheet" href="style.css" />
 
   <!-- Leaflet JS -->
@@ -18,6 +18,8 @@
 
 <body>
   <h2>NYC LinkNYC Map</h2>
+  <p id="total-count" style="font-size: 14px; color: #007bff;"></p>
+
 
   <div id="map-controls">
     <div>
@@ -28,15 +30,22 @@
     </div>
 
     <div>
-      <h3>Adjust Map Size</h3>
-      <input type="range" id="mapSizeSlider" min="300" max="800" value="500" oninput="resizeMap(this.value)">
-      <span id="mapSizeValue">500px</span>
-    </div>
+        <h3>Adjust Map Width</h3>
+        <input type="range" id="mapWidthSlider" min="50" max="100" value="90" oninput="resizeMapWidth(this.value)">
+        <span id="mapWidthValue">90%</span>
+      </div>      
   </div>
 
   <h3>Search by ZIPCODE</h3>
+
+  
   <input type="text" id="zipcode" placeholder="e.g., 10001">
   <button onclick="loadMap()">Search</button>
+  <p id="result-count" style="font-size: 14px; color: #007bff;"></p>
+
+  <p style="font-size: 14px; color: #555; margin-top: 10px; margin-bottom: 5px;">
+    Hover over circles on the map to see kiosk type and address.
+  </p>
 
   <div id="map"></div>
 
